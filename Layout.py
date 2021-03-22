@@ -20,15 +20,17 @@ storage = [
 ]
 
 turbine_style = style={'border-radius':'50%','position':'relative','left':'0px'}
-wind_style={'border-radius':'50%','position':'absolute','left':'0px','transform':'rotate(0deg)'}
+wind_style={'border-radius':'50%','position':'absolute','left':'0px','transform':'rotate(0deg)','cursor': 'pointer'}
 
 # Make the angular position indicators
 wind_turbine_divs = []
 for i in range(NTURBINES) :
     tmp = html.Div(children=[html.Img(id='turbine-%d-img'%(i),height='150px',width='150px',style=turbine_style,src='assets/turbine.png'),
                              html.Img(id='wind-arrow-%d-img'%(i),height='150px',width='150px',style=wind_style,src='assets/wind.png'),
+                             html.Span('Wind direction indicated by red arrow.',className='tooltiptext'),
                              ],
-                   style={'display':'inline-block','position':'relative'}
+                   style={'display':'inline-block','position':'relative'},
+                   className='tooltip', # Meaning when you hover over this div, you get the text indicated in the Span above.
                    )
     wind_turbine_divs.append(tmp)
     if i+1 < NTURBINES :

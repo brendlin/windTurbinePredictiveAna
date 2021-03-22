@@ -4,6 +4,7 @@
 # (Other projects will be looking for an object called "app" in the current working directory)
 
 import dash
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css',
-                        ]
-app = dash.Dash(external_stylesheets=external_stylesheets)
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets += ['custom_styling_wind.css']
+
+app = dash.Dash(external_stylesheets=external_stylesheets,update_title=None)
