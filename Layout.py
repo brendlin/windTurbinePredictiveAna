@@ -12,11 +12,17 @@ import pandas as pd
 
 from app import app
 from .Callbacks import *
+from .Components import(
+    main_graph,
+    date_picker,
+    speed_slider,
+    header_infotip,
+)
 
 NTURBINES=4
 
 storage = [
-    dcc.Interval(id='interval-component',n_intervals=0,interval=1*3000), # in milliseconds
+    dcc.Interval(id='interval-component',n_intervals=0,interval=2*1000), # in milliseconds
 ]
 
 turbine_style = style={'border-radius':'50%','position':'relative','left':'0px'}
@@ -42,8 +48,19 @@ layout = html.Div( # Main Div
     children=[ # Main Div children
         html.Div( # Banner
             children=[
-                html.H5(children='Wind Turbine Predictive Maintenance'),
+                html.H5(children=['Wind Turbine Predictive Maintenance',
+                                  header_infotip,
+                                  ]),
                 *wind_turbine_divs,
+                html.Div([date_picker,
+                          html.Div(speed_slider,style={'width':'300px',
+                                                       'height':'20px',
+                                                       'display':'inline-block'}),
+                          html.Div(id='simulation-time',children='',
+                                   style={'display':'inline-block'}),
+                          ],
+                         ),
+                html.Div(main_graph),
             ],
             style={},
         ), # Banner End
