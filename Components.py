@@ -10,15 +10,41 @@ date_picker = dcc.DatePickerSingle(id='my-date-picker-single',
                                    initial_visible_month=start_date,
                                    date=start_date,
                                    disabled=False,
+                                   style={'vertical-align':'middle',
+                                          'padding':'4px 4px',
+                                          },
                                    )
 
-speed_slider = dcc.Slider(id='speed-slider',min=0.5,max=6,step=None,value=0.5,
-                          # Value equals number of 10-minute-intervals per second
-                          marks={0.5: '5m', # 2 seconds between steps, 10 minutes per step
-                                 1  :'10m',
-                                 2  :'20m',
-                                 6  : '1h',},
+hour_picker = dcc.Input(id='hour-picker',type='number',
+                        placeholder='00',min=0,max=23,step=1,
+                        style={'width':'50px','padding':'6px 6px','vertical-align':'middle',},
+                        )
+
+minute_picker = dcc.Input(id='minute-picker',type='number',
+                          placeholder='00',min=0,max=50,step=10,
+                          style={'width':'50px','padding':'6px 6px','vertical-align':'middle',},
                           )
+
+go_button = html.Div(html.Button('Go',id='go-button',style={'width':'100%','padding':'0 0'}),
+                     style={'display':'inline-block',
+                            'width':'50px','vertical-align':'middle',
+                            'padding':'0 0 0 8px',
+                            },
+                     )
+
+speed_slider = dcc.Slider(id='speed-slider',min=1,max=5.5,step=None,value=1,
+                          # Value equals number of 10-minute-intervals per second
+                          marks={1: '5m/s', # 2 seconds between steps, 10 minutes per step
+                                 2  :'10m/s',
+                                 3.5  :'20m/s',
+                                 5.5  : '1h/s',}
+                          )
+# Map between the visible slider positions and the actual value
+# (the unit of the value is "number of 10-minute-slices displayed per second)
+speed_slider_map = {1:0.5,
+                    2:  1,
+                    3.5:  2,
+                    5.5:  6,}
 
 header_infotip = html.Div([html.Sup(u'\u2139',style={'background-color':'#c7ebe1'}),
                            html.Span('Hover over the "'+u'\u2139'+'" for more explanation.',
@@ -26,12 +52,16 @@ header_infotip = html.Div([html.Sup(u'\u2139',style={'background-color':'#c7ebe1
                           className='tooltip',
                           )
 
-main_graph = dcc.Graph(id='display-tidepool-graph',
+# This is the dummy graph that will replaced by various figures
+main_graph = dcc.Graph(id='main-graph',
                        #config={'staticPlot':True,},
                        figure={'layout':{'margin':{'l':60, 'r':20, 't':27, 'b':20},
                                          'paper_bgcolor':'White','plot_bgcolor':'White',
-                                         'yaxis':{'title':'BG (mg/dL)','range':[50,300],'linecolor':'Black','mirror':'ticks','hoverformat':'0.0f',},
-                                         'xaxis':{'range':[1,100],'linecolor':'Black','mirror':'ticks'},
+                                         'yaxis':{'title':'Power [MW]','range':[0,300],
+                                                  'linecolor':'Black','mirror':'ticks',
+                                                  'hoverformat':'0.0f',},
+                                         'xaxis':{'range':[1,100],'linecolor':'Black',
+                                                  'mirror':'ticks'},
                                          }
                                },
                        style={'height': 400,}
