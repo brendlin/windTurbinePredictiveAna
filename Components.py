@@ -1,14 +1,30 @@
 
-from .Utils import start_date
+from .Styles import styles
+from .Utils import first_possible_date,last_possible_date
 
 import dash_core_components as dcc
 import dash_html_components as html
 
+def GetTurbineAngularDiv(i_turb) :
+    tmp = html.Div(children=[html.Img(id='turbine-%d-img'%(i_turb),height='150px',width='150px',
+                                      style=styles.turbine_style,src='assets/turbine.png'),
+                             html.Img(id='wind-arrow-%d-img'%(i_turb),height='150px',width='150px',
+                                      style=styles.wind_style,src='assets/wind.png'),
+                             html.Span('Wind direction indicated by red arrow.',
+                                       className='tooltiptext'),
+                             ],
+                   style={'display':'inline-block','position':'relative'},
+                   # Meaning when you hover over this div,
+                   # you get the text indicated in the Span above.
+                   className='tooltip',
+                   )
+    return tmp
+
 date_picker = dcc.DatePickerSingle(id='my-date-picker-single',
-                                   min_date_allowed=start_date,
-                                   max_date_allowed=start_date,
-                                   initial_visible_month=start_date,
-                                   date=start_date,
+                                   min_date_allowed=first_possible_date,
+                                   max_date_allowed=last_possible_date,
+                                   initial_visible_month=first_possible_date,
+                                   date=first_possible_date,
                                    disabled=False,
                                    style={'vertical-align':'middle',
                                           'padding':'4px 4px',

@@ -16,6 +16,7 @@ from .Callbacks import *
 from .Styles import styles
 from .Utils import TURBINES
 from .Components import(
+    GetTurbineAngularDiv,
     main_graph,
     date_picker,hour_picker,minute_picker,go_button,
     speed_slider,
@@ -32,19 +33,15 @@ storage = [
 # Make the angular position indicators
 wind_turbine_divs = []
 for i in range(len(TURBINES)) :
-    tmp = html.Div(children=[html.Img(id='turbine-%d-img'%(i),height='150px',width='150px',
-                                      style=styles.turbine_style,src='assets/turbine.png'),
-                             html.Img(id='wind-arrow-%d-img'%(i),height='150px',width='150px',
-                                      style=styles.wind_style,src='assets/wind.png'),
-                             html.Span('Wind direction indicated by red arrow.',
-                                       className='tooltiptext'),
+    tmp = html.Div(children=[GetTurbineAngularDiv(i),
+                             html.Div(TURBINES[i]),
                              ],
                    style={'display':'inline-block','position':'relative'},
-                   className='tooltip', # Meaning when you hover over this div, you get the text indicated in the Span above.
+                   # Below: when you hover over this div, you get the
+                   # text indicated in the Span above.
+                   className='tooltip',
                    )
     wind_turbine_divs.append(tmp)
-    if i+1 < NTURBINES :
-        wind_turbine_divs.append(html.Div(style={'width':'10px','display':'inline-block'}))
 
 
 # main layout
@@ -52,35 +49,51 @@ layout = html.Div( # Main Div
     children=[ # Main Div children
         html.Div( # Banner
             children=[
-                html.H5(children=['Wind Turbine Predictive Maintenance',
-                                  header_infotip,
-                                  ]),
-                *wind_turbine_divs,
-                html.Div([ # settings div
 
-                    html.Div([html.Div('Jump to date:',style=styles.jump_to_date),
-                              date_picker,
-                              hour_picker,html.Div(':',style=styles.hour_picker),
-                              minute_picker,
-                              go_button,
-                              ],style=styles.settings_style,), # end of date-picking div
+                html.Div(id='left-banner',children=[
+                    html.H5(children=['Wind Turbine Predictive Maintenance',header_infotip,]),
+                         ],
+                         style={'display':'inline-block','background-color':'aliceblue'},
+                         className='five columns',
+                         ),
 
-                    html.Div([html.Div('Simulation Speed:',style=styles.simulation_speed),
-                              html.Div(speed_slider,style=styles.speed_slider)
-                              ],
-                             style=styles.settings_style,), # end of speed-picking div
-
-                    html.Div([html.Div('Simulation Time:',style=styles.simulation_time_label),
-                              html.Div(id='simulation-time',children='', # set up in callback
-                                       style=styles.simulation_time),
-                              ],style=styles.settings_style,
-                             ), # end of simulation timestamp div
-
-                ],), # end settings div
-                html.Div(dcc.Graph(id='main-graph',figure=GetPowerPlot())),
+                html.Div(id='right-angular-info',children=[*wind_turbine_divs,],
+                         style=styles.right_angular_info,
+                         className='seven columns',
+                         ),
             ],
             style={},
+            className='row',
         ), # Banner End
+
+        html.Div( # another "row"
+            html.Div([ # time settings div
+
+                html.Div([html.Div('Jump to date:',style=styles.jump_to_date),
+                          date_picker,
+                          hour_picker,html.Div(':',style=styles.hour_picker),
+                          minute_picker,
+                          go_button,
+                          ],style=styles.subsetting_style,), # end of date-picking div
+
+                html.Div([html.Div('Simulation Speed:',style=styles.simulation_speed),
+                          html.Div(speed_slider,style=styles.speed_slider)
+                          ],
+                         style=styles.subsetting_style,), # end of speed-picking div
+
+                html.Div([html.Div('Simulation Time:',style=styles.simulation_time_label),
+                          html.Div(id='simulation-time',children='', # set up in callback
+                                   style=styles.simulation_time),
+                          ],style=styles.subsetting_style,
+                         ), # end of simulation timestamp div
+                     ],
+                     style=styles.time_settings_div,
+                     #className='twelve columns',
+            ), # end time settings div
+        ), # end another "row"
+
+        html.Div(dcc.Graph(id='main-graph',figure=GetPowerPlot())),
         *storage,
     ], # Main Div children End
+    style={'text-align':'left',},
 ) # Main Div End
