@@ -10,13 +10,8 @@ def GetTurbineAngularDiv(i_turb) :
                                       style=styles.turbine_style,src='assets/turbine.png'),
                              html.Img(id='wind-arrow-%d-img'%(i_turb),height='150px',width='150px',
                                       style=styles.wind_style,src='assets/wind.png'),
-                             html.Span('Wind direction indicated by red arrow.',
-                                       className='tooltiptext'),
                              ],
                    style={'display':'inline-block','position':'relative'},
-                   # Meaning when you hover over this div,
-                   # you get the text indicated in the Span above.
-                   className='tooltip',
                    )
     return tmp
 
@@ -62,11 +57,16 @@ speed_slider_map = {1:0.5,
                     3.5:  2,
                     5.5:  6,}
 
-header_infotip = html.Div([html.Sup(u'\u2139',style={'background-color':'#c7ebe1'}),
-                           html.Span('Hover over the "'+u'\u2139'+'" for more explanation.',
-                                     className='tooltiptext',style={'font-size':'1.5rem'}),],
-                          className='tooltip',
-                          )
+def MakeInfotip(text,hover_style={}) :
+    _infotip = html.Div([html.Sup(u'\u2139',style={'background-color':'#c7ebe1'}),
+                         html.Span(text,className='tooltiptext',style=hover_style),],
+                        className='tooltip',
+                        )
+    return _infotip
+
+angular_infotip = MakeInfotip('Wind direction indicated by red arrow.')
+header_infotip  = MakeInfotip('Hover over the "'+u'\u2139'+'" for more explanation.',
+                              hover_style={'font-size':'1.5rem'})
 
 # This is the dummy graph that will replaced by various figures
 main_graph = dcc.Graph(id='main-graph',

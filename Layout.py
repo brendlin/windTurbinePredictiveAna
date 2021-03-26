@@ -21,6 +21,7 @@ from .Components import(
     date_picker,hour_picker,minute_picker,go_button,
     speed_slider,
     header_infotip,
+    angular_infotip,
 )
 from .Plots import(
     GetPowerPlot,
@@ -34,12 +35,11 @@ storage = [
 wind_turbine_divs = []
 for i in range(len(TURBINES)) :
     tmp = html.Div(children=[GetTurbineAngularDiv(i),
-                             html.Div(TURBINES[i]),
+                             html.Div([TURBINES[i],angular_infotip]),
                              ],
                    style={'display':'inline-block','position':'relative'},
                    # Below: when you hover over this div, you get the
                    # text indicated in the Span above.
-                   className='tooltip',
                    )
     wind_turbine_divs.append(tmp)
 
