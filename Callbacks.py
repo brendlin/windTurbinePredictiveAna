@@ -10,16 +10,46 @@ from app import app
 NTURBINES=4
 
 # Update the wind and turbine angles
-@app.callback(Output('interval-component','interval'),
-              Input('speed-slider','value'),
+@app.callback([Output('interval-component','interval'),
+               Output('interval-component','disabled'),
+               Output('pause-resume-button','children'),
+               ],
+              [Input('speed-slider','value'),
+               Input('toggle-realtime','value'),
+               Input('pause-resume-button','n_clicks'),
+               ],
               )
-def ChangeSpeedOfUpdate(n_tenMinIntervalsPerSec) :
+def ModifyUpdates(n_tenMinIntervalsPerSec,do_realtime,nPauseClicks) :
+
+    # Calculate the desired interval time
     n_tenMinIntervalsPerSec = speed_slider_map[n_tenMinIntervalsPerSec]
     step_duration = (1/float(n_tenMinIntervalsPerSec))
-    step_duration = max(step_duration,0.5) # in realtime seconds
-    return step_duration*1000 # in milliseconds
+    step_duration = max(step_duration,0.5) # in realtime seconds -- max one update every 0.5 sec
+    step_duration = step_duration*1000 # in milliseconds
 
-# Update the wind and turbine angles
+    # If realtime is turned off, then turn off the real-time updates.
+    if not do_realtime :
+        return step_duration,True,'[Disabled]' # (1000 years)*d*h*s*ms
+
+    # If pause was clicked an even number of times, then do not update:
+    if nPauseClicks%2 :
+        return step_duration,True,'Resume'
+
+    return step_duration,False,'Pause'
+
+
+# This callback achieves the following:
+# - (Triggered by a regular interval)
+# SIMULATOR TIME:
+#  - Initializes the simulator time, if not already initialized
+#  - Increments the simulator by the delta time that has passed
+#  - Changes the available dates in the simulator menu
+# DATA:
+#  - If the simulator data does not exist, load it from the csv files (only what you need)
+#  - Update the data if we have moved into a different time range
+# APPEARANCE:
+#  - Update the wind and turbine angles
+#
 @app.callback([Output('simulation-time','children'),
                Output('my-date-picker-single','initial_visible_month'),
                Output('my-date-picker-single','date'),
@@ -44,7 +74,7 @@ def UpdateEverything(n_intervals,n_tenMinIntervalsPerSec,
 
     n_tenMinIntervalsPerSec = speed_slider_map[n_tenMinIntervalsPerSec]
 
-    # Update the simulation time
+    # Initialize the simulation time
     if not simulation_time :
         now = datetime.now()
         # Now, instead it is in 2017, and rounded down the nearest 10 minutes.
@@ -54,6 +84,7 @@ def UpdateEverything(n_intervals,n_tenMinIntervalsPerSec,
         date_picker_start_date = simulation_time
 
     else :
+        # Update the simulation time
         add_time = timedelta(minutes=10*n_tenMinIntervalsPerSec*realtimeStepDurationMs*0.001)
         #print('10*',n_tenMinIntervalsPerSec,'*',realtimeStepDurationMs*0.001,'=',add_time)
         simulation_time = datetime.strptime(simulation_time,'%Y-%m-%d %H:%M') + add_time

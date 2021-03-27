@@ -59,6 +59,7 @@ speed_slider_map = {1:0.5,
                     5.5:  6,}
 
 pause_resume = html.Div(html.Button('Pause',id='pause-resume-button',
+                                    n_clicks=0,
                                     style={'width':'100%',
                                            'height':'100%',
                                            'padding':'0px 12px 0px 12px',
