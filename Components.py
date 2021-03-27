@@ -4,6 +4,7 @@ from .Utils import first_possible_date,last_possible_date
 
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_daq as daq
 
 def GetTurbineAngularDiv(i_turb) :
     tmp = html.Div(children=[html.Img(id='turbine-%d-img'%(i_turb),height='150px',width='150px',
@@ -56,6 +57,29 @@ speed_slider_map = {1:0.5,
                     2:  1,
                     3.5:  2,
                     5.5:  6,}
+
+pause_resume = html.Div(html.Button('Pause',id='pause-resume-button',
+                                    style={'width':'100%',
+                                           'height':'100%',
+                                           'padding':'0px 12px 0px 12px',
+                                           'border-radius':'4px',
+                                           }),
+                        style = {'height':'55px',
+                                 'margin':'2px',
+                                 'display':'inline-flex',
+                                 'align-items':'center'},
+                     )
+
+toggle_realtime = html.Div([html.Div('Historical',style=styles.time_settings),
+                            daq.ToggleSwitch(id='toggle-realtime',
+                                             value=False,
+                                             style=styles.toggle_realtime,
+                                             color='#c35656',
+                                             ),
+                            html.Div('Real-time',style=styles.time_settings),
+                            ],
+                           style=styles.subsetting_style,
+                           )
 
 def MakeInfotip(text,hover_style={}) :
     _infotip = html.Div([html.Sup(u'\u2139',style={'background-color':'#c7ebe1'}),

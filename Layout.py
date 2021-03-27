@@ -22,6 +22,8 @@ from .Components import(
     speed_slider,
     header_infotip,
     angular_infotip,
+    toggle_realtime,
+    pause_resume,
 )
 from .Plots import(
     GetPowerPlot,
@@ -52,6 +54,7 @@ layout = html.Div( # Main Div
 
                 html.Div(id='left-banner',children=[
                     html.H5(children=['Wind Turbine Predictive Maintenance',header_infotip,]),
+                    toggle_realtime,
                          ],
                          style={'display':'inline-block','background-color':'aliceblue'},
                          className='five columns',
@@ -86,6 +89,9 @@ layout = html.Div( # Main Div
                                    style=styles.simulation_time),
                           ],style=styles.subsetting_style,
                          ), # end of simulation timestamp div
+
+                pause_resume,
+
                      ],
                      style=styles.time_settings_div,
                      #className='twelve columns',

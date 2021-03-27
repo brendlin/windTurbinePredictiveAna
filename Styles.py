@@ -27,6 +27,9 @@ styles.subsetting_style = {'border':'1px solid gray',
                            'display':'inline-flex',
                            'align-items':'center'}
 
+styles.time_settings = {'padding':'4px 4px','text-align':'center',
+                              'display':'inline-block'}
+
 styles.jump_to_date = {'padding':'4px 4px','text-align':'center',
                        'display':'inline-block'}
 
@@ -43,3 +46,7 @@ styles.simulation_time_label = {'padding':'4px 4px','text-align':'center',
                                 'display':'inline-block'}
 
 styles.simulation_time = {'display':'inline-block','padding':'4px 4px'}
+
+styles.toggle_realtime = {'padding':'4px 4px','text-align':'center',
+                          'display':'inline-block',
+                          }
