@@ -25,12 +25,11 @@ from .Components import(
     toggle_realtime,
     pause_resume,
 )
-from .Plots import(
-    GetPowerPlot,
-)
 
 storage = [
     dcc.Interval(id='interval-component',n_intervals=0,interval=2*1000), # in milliseconds
+    dcc.Graph(id='realtime-data-all',figure={}),
+    dcc.Graph(id='historical-data-all',figure={}),
 ]
 
 # Make the angular position indicators
@@ -98,7 +97,7 @@ layout = html.Div( # Main Div
             ), # end time settings div
         ), # end another "row"
 
-        html.Div(dcc.Graph(id='main-graph',figure=GetPowerPlot())),
+        html.Div(dcc.Graph(id='main-graph',figure={})),
         *storage,
     ], # Main Div children End
     style={'text-align':'left',},

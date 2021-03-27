@@ -4,8 +4,13 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from datetime import datetime,timedelta
 
+from .Utils import TIMEIT
 from .Components import speed_slider_map
 from app import app
+
+from .Plots import(
+    GetPowerPlot,
+)
 
 NTURBINES=4
 
@@ -53,24 +58,22 @@ def ModifyUpdates(n_tenMinIntervalsPerSec,do_realtime,nPauseClicks) :
 @app.callback([Output('simulation-time','children'),
                Output('my-date-picker-single','initial_visible_month'),
                Output('my-date-picker-single','date'),
-               ] +
-              list(Output('turbine-%d-img'%(i), 'style') for i in range(NTURBINES)) +
-              list(Output('wind-arrow-%d-img'%(i), 'style') for i in range(NTURBINES)),
+               ],
               Input('interval-component', 'n_intervals'),
               [State('speed-slider', 'value'),
                State('interval-component', 'interval'),
                State('simulation-time','children'),
                State('my-date-picker-single','initial_visible_month'),
                State('my-date-picker-single','date'),
-               ] +
-              list(State('turbine-%d-img'%(i), 'style') for i in range(NTURBINES)) +
-              list(State('wind-arrow-%d-img'%(i), 'style') for i in range(NTURBINES)),
-              )
+               ])
 def UpdateEverything(n_intervals,n_tenMinIntervalsPerSec,
                      realtimeStepDurationMs,simulation_time,
                      date_picker_initial_visible_month,
                      date_picker_start_date,
-                     *styles) :
+                     ) :
+
+    if TIMEIT :
+        now = datetime.now()
 
     n_tenMinIntervalsPerSec = speed_slider_map[n_tenMinIntervalsPerSec]
 
@@ -90,15 +93,61 @@ def UpdateEverything(n_intervals,n_tenMinIntervalsPerSec,
         simulation_time = datetime.strptime(simulation_time,'%Y-%m-%d %H:%M') + add_time
         simulation_time = simulation_time.strftime('%Y-%m-%d %H:%M')
 
+
+    if TIMEIT :
+        print('UpdateEverything took',datetime.now()-now)
+
+    return simulation_time,simulation_time,simulation_time
+
+
+# Callback for which plot to show
+@app.callback([Output('main-graph','figure'),
+               Output('realtime-data-all','figure'),
+               Output('historical-data-all','figure')] +
+              list(Output('turbine-%d-img'%(i), 'style') for i in range(NTURBINES)) +
+              list(Output('wind-arrow-%d-img'%(i), 'style') for i in range(NTURBINES)),
+              [Input('simulation-time','children'),
+               Input('toggle-realtime','value'),
+               ],
+              [State('realtime-data-all','figure'),
+               State('historical-data-all','figure')] +
+              list(State('turbine-%d-img'%(i), 'style') for i in range(NTURBINES)) +
+              list(State('wind-arrow-%d-img'%(i), 'style') for i in range(NTURBINES)),
+              )
+def DisplayPlot(simulation_time,do_realtime,realtime_figures,historical_figures,
+                *angle_styles) :
+
+    if TIMEIT :
+        now = datetime.now()
+
+    #
+    # Historical
+    #
+    if not do_realtime :
+
+        if not historical_figures :
+            historical_figures = GetPowerPlot()
+
+        if TIMEIT :
+            print('DisplayPlot (historical) took',datetime.now()-now)
+
+        return historical_figures,realtime_figures,historical_figures,*angle_styles
+
+    #
+    # Realtime
+    #
     for i in range(NTURBINES) :
-        current_windloc = int(styles[i+NTURBINES]['transform'].split('(')[1].split('deg')[0])
+        current_windloc = int(angle_styles[i+NTURBINES]['transform'].split('(')[1].split('deg')[0])
         current_windloc += int(np.random.normal(0,10))
         current_turbloc = int(current_windloc + np.random.normal(0,5))
 
         # wind loc
-        styles[i+NTURBINES]['transform'] = 'rotate({}deg)'.format(current_windloc)
+        angle_styles[i+NTURBINES]['transform'] = 'rotate({}deg)'.format(current_windloc)
 
         # turbine loc
-        styles[i]['transform'] = 'rotate({}deg)'.format(current_turbloc)
+        angle_styles[i]['transform'] = 'rotate({}deg)'.format(current_turbloc)
 
-    return simulation_time,simulation_time,simulation_time,*styles
+    if TIMEIT :
+        print('DisplayPlot (realtime) took',datetime.now()-now)
+
+    return realtime_figures,realtime_figures,historical_figures,*angle_styles

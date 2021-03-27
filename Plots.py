@@ -3,7 +3,7 @@ import pandas as pd
 from plotly.subplots import make_subplots
 from datetime import datetime
 
-from .Utils import TURBINES
+from .Utils import TURBINES,TIMEIT
 
 def UpdateLayout(fig) :
 
@@ -24,10 +24,11 @@ def GetPowerPlot() :
     fig.update_yaxes(title_text="Power [MW]", row=1, col=1)
     UpdateLayout(fig)
 
-    now = datetime.now()
+    if TIMEIT :
+        now = datetime.now()
 
     for i,turbine in enumerate(TURBINES) :
-        print('Processing turbine %s'%(turbine))
+        #print('Processing turbine %s'%(turbine))
         df = pd.read_csv('laHauteData/%s_all.csv.gz'%(turbine),compression='gzip')
 
         if i == 0 :
@@ -37,7 +38,7 @@ def GetPowerPlot() :
             # and recreate the date_range instead of converting the times.
             theTimeAxis = pd.date_range(start=df['Date_time'].iloc[0],
                                         end=df['Date_time'].iloc[-1],freq='10min')
-            print("length of data is",theTimeAxis.shape)
+            #print("length of data is",theTimeAxis.shape)
 
         plot = {'x':theTimeAxis,
                 'y':df['P_avg'],
@@ -45,8 +46,10 @@ def GetPowerPlot() :
                 }
         fig.append_trace(plot,1,1)
 
-    print('loading took',datetime.now()-now)
+    del df
+    del theTimeAxis
+
+    if TIMEIT :
+        print('GetPowerPlot took',datetime.now()-now)
 
     return fig
-
-    
