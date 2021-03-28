@@ -11,5 +11,5 @@ TZINFO = pytz.timezone(TIMEZONE)
 
 TIMEIT = False
 
-REALTIME_VARS = ['P_avg']
+REALTIME_VARS = ['P_avg','Ya_avg','Wa_reconstructed']
 REALTIME_NDATAPOINTS = int( 60*60 /10. ) # 24 hours * 60 minutes

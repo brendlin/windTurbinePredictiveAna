@@ -20,7 +20,7 @@ def UpdateLayout(fig) :
 
     return
 
-def GetDataForRealTimePlots(simulation_time_dt) :
+def GetAllDataForRealTimePlots(simulation_time_dt) :
 
     data = []
 
@@ -73,27 +73,38 @@ def GetDataForRealTimePlots(simulation_time_dt) :
             data.append(plot)
 
     if TIMEIT :
-        print('GetDataForRealTimePlots took',datetime.now()-now)
+        print('GetAllDataForRealTimePlots took',datetime.now()-now)
 
     return {'data':data},realtime_index
+
+
+def GetTimeAxisForRealtimePlot(realtime_data) :
+    # Return the time-series 'x' axis for realtime plots
+    # The "x" (datetime) is only stored for the first plot..!
+    return realtime_data['data'][0]['x']
+
+
+def GetVarDataForRealtimePlot(realtime_data,i_turbine,variable) :
+    # Get the plot that contains the data (in 'y')
+    i_plot = i_turbine*len(REALTIME_VARS) + REALTIME_VARS.index(variable)
+    return realtime_data['data'][i_plot]['y']
 
 
 def UpdateRealtimePlot(realtime_data_all,variable,realtime_index) :
 
     fig = make_subplots(rows=1,cols=1,shared_xaxes=True)
 
-    # The "x" (datetime) is only stored for the first plot..!
-    x = realtime_data_all['data'][0]['x']
+    x = GetTimeAxisForRealtimePlot(realtime_data_all)
 
     for i_turbine in range(len(TURBINES)) :
 
-        i_plot = i_turbine*len(REALTIME_VARS) + REALTIME_VARS.index(variable)
-        data_all_plot = realtime_data_all['data'][i_plot]
+        data_all_y = GetVarDataForRealtimePlot(realtime_data_all,i_turbine,variable)
 
-        start_index = max(realtime_index-REALTIME_NDATAPOINTS,0)
-        plot = {'x':x[start_index:realtime_index],
-                'y':data_all_plot['y'][start_index:realtime_index]
-                ,'name':data_all_plot['name'].split()[0]}
+        start_index = max(realtime_index-REALTIME_NDATAPOINTS+1,0)
+        plot = {'x':         x[start_index:realtime_index+1],
+                'y':data_all_y[start_index:realtime_index+1],
+                'name':TURBINES[i_turbine]}
+
         fig.append_trace(plot,1,1)
 
     return fig

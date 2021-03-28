@@ -10,7 +10,8 @@ from .Components import speed_slider_map
 from app import app
 
 from .Plots import(
-    GetDataForRealTimePlots,
+    GetAllDataForRealTimePlots,
+    GetVarDataForRealtimePlot,
     UpdateRealtimePlot,
     GetPowerPlot,
 )
@@ -160,7 +161,7 @@ def UpdateEverything(n_intervals,
         data_too_young = realtime_data_start > data_age_requirement
 
     if (not realtime_data_all or data_too_old or data_too_young) :
-        realtime_data_all,realtime_index = GetDataForRealTimePlots(simulation_time_dt)
+        realtime_data_all,realtime_index = GetAllDataForRealTimePlots(simulation_time_dt)
 
     if TIMEIT :
         print('UpdateEverything took',datetime.now()-now)
@@ -211,15 +212,13 @@ def DisplayPlot(simulation_time,do_realtime,realtime_data,realtime_index,histori
     updating_data = UpdateRealtimePlot(realtime_data,'P_avg',realtime_index)
 
     for i in range(len(TURBINES)) :
-        current_windloc = int(angle_styles[i+len(TURBINES)]['transform'].split('(')[1].split('deg')[0])
-        current_windloc += int(np.random.normal(0,10))
-        current_turbloc = int(current_windloc + np.random.normal(0,5))
+        # wind angle
+        Wa = GetVarDataForRealtimePlot(realtime_data,i,'Wa_reconstructed')[realtime_index]
+        angle_styles[i+len(TURBINES)]['transform'] = 'rotate({}deg)'.format(int(Wa))
 
-        # wind loc
-        angle_styles[i+len(TURBINES)]['transform'] = 'rotate({}deg)'.format(current_windloc)
-
-        # turbine loc
-        angle_styles[i]['transform'] = 'rotate({}deg)'.format(current_turbloc)
+        # turbine angle
+        Ya = GetVarDataForRealtimePlot(realtime_data,i,'Ya_avg')[realtime_index]
+        angle_styles[i]['transform'] = 'rotate({}deg)'.format(int(Ya))
 
     if TIMEIT :
         print('DisplayPlot (realtime) took',datetime.now()-now)

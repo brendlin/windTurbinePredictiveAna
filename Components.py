@@ -73,7 +73,7 @@ pause_resume = html.Div(html.Button('Pause',id='pause-resume-button',
 
 toggle_realtime = html.Div([html.Div('Historical',style=styles.time_settings),
                             daq.ToggleSwitch(id='toggle-realtime',
-                                             value=False,
+                                             value=True,
                                              style=styles.toggle_realtime,
                                              color='#c35656',
                                              ),
