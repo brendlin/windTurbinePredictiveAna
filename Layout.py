@@ -27,8 +27,10 @@ from .Components import(
 )
 
 storage = [
+    html.Div(id='simulation-time',children='',style={'display':'none'}),
     dcc.Interval(id='interval-component',n_intervals=0,interval=2*1000), # in milliseconds
     dcc.Graph(id='realtime-data-all',figure={}),
+    html.Div(id='realtime-index',children=0,style={'display':'none'}), # current index
     dcc.Graph(id='historical-data-all',figure={}),
 ]
 
@@ -84,7 +86,7 @@ layout = html.Div( # Main Div
                          style=styles.subsetting_style,), # end of speed-picking div
 
                 html.Div([html.Div('Simulation Time:',style=styles.simulation_time_label),
-                          html.Div(id='simulation-time',children='', # set up in callback
+                          html.Div(id='simulation-time-display',children='', # set up in callback
                                    style=styles.simulation_time),
                           ],style=styles.subsetting_style,
                          ), # end of simulation timestamp div
