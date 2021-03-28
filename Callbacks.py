@@ -5,7 +5,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from datetime import datetime,timedelta
 
-from .Utils import TURBINES,TIMEIT,TZINFO,REALTIME_NDATAPOINTS
+from .Utils import last_possible_date,TURBINES,TIMEIT,TZINFO,REALTIME_NDATAPOINTS
 from .Components import speed_slider_map
 from app import app
 
@@ -131,6 +131,12 @@ def UpdateEverything(n_intervals,
         simulation_time = simulation_time_dt.strftime('%Y-%m-%d %H:%M')
         date_picker_date = simulation_time
         date_picker_initvis_mo = simulation_time
+
+    elif simulation_time > last_possible_date :
+
+        # do not update the simulation time!
+        return (simulation_time,date_picker_initvis_mo,date_picker_date,
+                realtime_data_all,realtime_index)
 
     else :
         # Update the simulation time
