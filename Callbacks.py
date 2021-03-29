@@ -214,11 +214,13 @@ def DisplayPlot(simulation_time,do_realtime,realtime_data,realtime_index,histori
     for i in range(len(TURBINES)) :
         # wind angle
         Wa = GetVarDataForRealtimePlot(realtime_data,i,'Wa_reconstructed')[realtime_index]
-        angle_styles[i+len(TURBINES)]['transform'] = 'rotate({}deg)'.format(int(Wa))
+        if Wa != None :
+            angle_styles[i+len(TURBINES)]['transform'] = 'rotate({}deg)'.format(int(Wa))
 
-        # turbine angle
+        # turbine (Yaw) angle
         Ya = GetVarDataForRealtimePlot(realtime_data,i,'Ya_avg')[realtime_index]
-        angle_styles[i]['transform'] = 'rotate({}deg)'.format(int(Ya))
+        if Ya != None :
+            angle_styles[i]['transform'] = 'rotate({}deg)'.format(int(Ya))
 
     if TIMEIT :
         print('DisplayPlot (realtime) took',datetime.now()-now)
