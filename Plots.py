@@ -41,10 +41,10 @@ def GetAllDataForRealTimePlots(simulation_time_dt) :
             if month == 0 :
                 year -= 1
                 month = 12
-            filenames.append('{}/{}/{:02d}/{}.csv.gz'.format('laHauteData',year,month,turbine))
+            filenames.append('{}/{}/{:02d}/{}.csv.gz'.format('data',year,month,turbine))
 
         # the current month
-        filenames.append('{}/{}/{:02d}/{}.csv.gz'.format('laHauteData',
+        filenames.append('{}/{}/{:02d}/{}.csv.gz'.format('data',
                                                          simulation_time_dt.year,
                                                          simulation_time_dt.month,turbine))
 
@@ -93,6 +93,7 @@ def GetVarDataForRealtimePlot(realtime_data,i_turbine,variable) :
 def UpdateRealtimePlot(realtime_data_all,variable,realtime_index) :
 
     fig = make_subplots(rows=1,cols=1,shared_xaxes=True)
+    UpdateLayout(fig)
 
     x = GetTimeAxisForRealtimePlot(realtime_data_all)
 
@@ -121,7 +122,7 @@ def GetPowerPlot() :
 
     for i,turbine in enumerate(TURBINES) :
         #print('Processing turbine %s'%(turbine))
-        df = pd.read_csv('laHauteData/%s_all.csv.gz'%(turbine),compression='gzip')
+        df = pd.read_csv('data/%s_all.csv.gz'%(turbine),compression='gzip')
 
         if i == 0 :
             #theTimeAxis = pd.to_datetime(df['Date_time'],infer_datetime_format=True)

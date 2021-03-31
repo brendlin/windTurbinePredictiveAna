@@ -18,6 +18,7 @@ styles.right_angular_info = {'display':'inline-flex',
 styles.time_settings_div = {'width':'100%',
                             'display':'inline-flex',
                             'justify-content':'center',
+                            'flex-wrap':'wrap',
                             }
 
 styles.subsetting_style = {'border':'1px solid gray',
